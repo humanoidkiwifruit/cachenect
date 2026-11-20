@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Cachenect",
+  "version": "1.0",
+
+  "description": "Firefox extension to cache connect (connect.det.wa.edu.au) data",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "webRequestFilterResponse",
+    "storage"
+  ],
+  "host_permissions": ["*://connect.det.wa.edu.au/*"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cachenect@humanoidkiwifruit.github.io",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://connect.det.wa.edu.au/*"],
+      "js": ["indicator.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["listener.js"]
+  },
+  "action": {
+    "default_title": "Open Viewer"
+  }
+}

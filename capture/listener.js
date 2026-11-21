@@ -1,9 +1,9 @@
-const target = "*://connect.det.wa.edu.au/*";
+export const target = "*://connect.det.wa.edu.au/*";
 const classes_request_url = "/connectapi/rest/api/v1/app/my_classes/";
 
-function logResponse(details) {
+export function observeResponse(details) {
   if (details.type !== "xmlhttprequest") return;
-  if (!details.url.includes(classes_request_url)) return;
+  if (!isInterestingUrl(details.url)) return;
 
   let filter = browser.webRequest.filterResponseData(details.requestId);
   const decoder = new TextDecoder("utf-8");
@@ -39,17 +39,7 @@ function logResponse(details) {
   };
 }
 
-browser.webRequest.onBeforeRequest.addListener(
-  logResponse,
-  { urls: [target] },
-  ["blocking"],
-);
 
-
-
-
-browser.action.onClicked.addListener(async () => {
-  browser.tabs.create({
-    url: browser.runtime.getURL("classes.html")
-  });
-});
+function isInterestingUrl(url) {
+  return url.includes(classes_request_url)
+}

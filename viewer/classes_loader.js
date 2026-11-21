@@ -1,13 +1,13 @@
 const baseRedirect = "https://connect.det.wa.edu.au/redirect/cls/";
 
 const prettyNameLookups = {
-  "announcements": "Notices",
+  announcements: "Notices",
   "class-library": "Library",
   "learning-content": "Content",
-  "submissions": "Submissions",
-  "discussions": "Discussions",
-  "learners": "Learners"
-}
+  submissions: "Submissions",
+  discussions: "Discussions",
+  learners: "Learners",
+};
 
 async function loadClasses() {
   const classes = (await browser.storage.local.get("classes")).classes;
@@ -28,9 +28,11 @@ function classTableRow(class_item) {
   let nameLinkTd = linkTd(idRedirect, class_item.name);
   classTr.appendChild(nameLinkTd);
 
-  let otherTds = Object.keys(prettyNameLookups).map((name) => { return linkTd(idRedirect + name, prettyNameLookups[name]) })
+  let otherTds = Object.keys(prettyNameLookups).map((name) => {
+    return linkTd(idRedirect + name, prettyNameLookups[name]);
+  });
   for (let td of otherTds) {
-    classTr.appendChild(td)
+    classTr.appendChild(td);
   }
 
   return classTr;

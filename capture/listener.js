@@ -26,7 +26,6 @@ export function observeResponse(details) {
         classes: json_classes,
         lastSync: Date.now(),
       });
-
     } catch (error) {
       console.error("error: ", error.message);
     } finally {
@@ -39,7 +38,6 @@ export function observeResponse(details) {
   };
 }
 
-
 function isInterestingUrl(url) {
-  return url.includes(classes_request_url)
+  return url.includes(classes_request_url);
 }

@@ -1,6 +1,7 @@
 const baseRedirect = "https://connect.det.wa.edu.au/redirect/cls/";
 
 const prettyNameLookups = {
+  // "slug": "Pretty Name"
   announcements: "Notices",
   "class-library": "Library",
   "learning-content": "Content",
@@ -25,8 +26,12 @@ function classTableRow(class_item) {
   let classTr = document.createElement("tr");
   const idRedirect = baseRedirect + class_item.entityId + "/";
 
-  let nameLinkTd = linkTd(idRedirect, class_item.name);
+  let nameLinkTd = linkTd(
+    idRedirect,
+    class_item.name + " - id (" + class_item.entityId + ")",
+  );
   classTr.appendChild(nameLinkTd);
+  nameLinkTd.classList.add("classname");
 
   let otherTds = Object.keys(prettyNameLookups).map((name) => {
     return linkTd(idRedirect + name, prettyNameLookups[name]);

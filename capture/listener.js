@@ -1,9 +1,9 @@
 export const target = "*://connect.det.wa.edu.au/*";
-const classes_request_url = "/connectapi/rest/api/v1/app/my_classes/";
+const apiRequestPath = "connect.det.wa.edu.au/connectapi/rest/api/v1";
 
 export function observeResponse(details) {
   if (details.type !== "xmlhttprequest") return;
-  if (!isInterestingUrl(details.url)) return;
+  if (!(isInterestingUrl(details.url) === "classesRequest")) return;
 
   let filter = browser.webRequest.filterResponseData(details.requestId);
   const decoder = new TextDecoder("utf-8");
@@ -22,10 +22,7 @@ export function observeResponse(details) {
       const json_classes = json_data.items;
       console.log(json_classes);
 
-      await browser.storage.local.set({
-        classes: json_classes,
-        lastSync: Date.now(),
-      });
+      await writeClassesData(json_classes);
     } catch (error) {
       console.error("error: ", error.message);
     } finally {
@@ -39,5 +36,18 @@ export function observeResponse(details) {
 }
 
 function isInterestingUrl(url) {
-  return url.includes(classes_request_url);
+  if (url.includes(classesRequestUrl)) {
+    return "classesRequest";
+  }
+  /*if (url.includes(classLibraryRequestUrl)) {
+    return "libraryRequest";
+    }*/
+  return url.includes(classesRequestUrl);
+}
+
+async function writeClassesData(json_classes) {
+  await browser.storage.local.set({
+    classes: json_classes,
+    lastSync: Date.now(),
+  });
 }

@@ -1,6 +1,6 @@
 # cachenect
 
-Firefox extension to cache connect (connect.det.wa.edu.au) data and present it in an alternative view
+Firefox extension to cache connect (connect.det.wa.edu.au) data and present it in an alternative view.
 
 ## Installation
 

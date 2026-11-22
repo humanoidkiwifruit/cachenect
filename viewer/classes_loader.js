@@ -11,13 +11,16 @@ const prettyNameLookups = {
 };
 
 async function loadClasses() {
-  const { classes = [] } = await browser.storage.local.get("classes");
+  const { cachenectClassesData = [] } = await browser.storage.local.get(
+    "cachenectClassesData",
+  );
+  console.log("cachenectClassesData: ", cachenectClassesData);
 
   const table = document.getElementById("classes-table");
   table.innerHTML = "";
 
-  for (const class_item of classes) {
-    const classRow = classTableRow(class_item);
+  for (const [class_id, class_data] of Object.entries(cachenectClassesData)) {
+    const classRow = classTableRow(class_id, class_data);
     table.appendChild(classRow);
   }
 }
@@ -29,13 +32,13 @@ document.getElementById("clear-btn").addEventListener("click", () => {
   loadClasses();
 });
 
-function classTableRow(class_item) {
+function classTableRow(class_id, class_data) {
   let classTr = document.createElement("tr");
-  const idRedirect = baseRedirect + class_item.entityId + "/";
+  const idRedirect = baseRedirect + class_id + "/";
 
   let nameLinkTd = linkTd(
     idRedirect,
-    class_item.name + " - id (" + class_item.entityId + ")",
+    class_data.name + " - id (" + class_id + ")",
   );
   classTr.appendChild(nameLinkTd);
   nameLinkTd.classList.add("class-pretty-name");

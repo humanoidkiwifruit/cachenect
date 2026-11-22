@@ -1,8 +1,7 @@
-import { handleClassesResponse } from "./handlers.js";
+import { handleClassesResponse, handleLibraryRequest } from "./handlers.js";
 export const target = "*://connect.det.wa.edu.au/*";
 const apiRequestPath = "connect.det.wa.edu.au/connectapi/rest/api/v1";
 const classesRequestUrl = apiRequestPath + "/app/my_classes/";
-//const libraryRequestUrl = apiRequestPath + "/library/node/ * /contents"
 export function observeResponse(details) {
   if (details.type !== "xmlhttprequest") return;
   const requestType = getInterestingRequestType(details.url);
@@ -20,9 +19,9 @@ async function processResponse(details, requestType) {
     if (requestType === "classesRequest") {
       await handleClassesResponse(rawText);
     }
-    /*if (requestType === "libraryRequest") {
+    if (requestType === "libraryRequest") {
       await handleLibraryRequest(details, rawText);
-    }*/
+    }
   } catch (error) {
     console.error(`Error: ${error}`);
   }
@@ -52,11 +51,16 @@ function getFullResponseData(requestId) {
 }
 
 function getInterestingRequestType(url) {
+  let cleanUrl = url.split("?")[0];
   if (url.includes(classesRequestUrl)) {
     return "classesRequest";
   }
-  /*if (url.includes()) {
+  if (
+    cleanUrl.includes(apiRequestPath + "/library/node") &&
+    cleanUrl.endsWith("/contents")
+  ) {
+    //apiRequestPath + "/library/node/<some strange id derived from the class id>/contents"
     return "libraryRequest";
-    }*/
+  }
   return "boring";
 }

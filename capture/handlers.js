@@ -23,14 +23,22 @@ export async function handleClassesResponse(rawText) {
 export async function handleLibraryRequest(details, rawText) {
   const referrerUrl = details.documentUrl || details.originUrl;
   console.log(`got library request from referrer ${referrerUrl}`);
+  const referrerClassId = getEndingNumber(referrerUrl);
+  console.log(`referrer class id: ${referrerClassId}`);
+  let classesData = await getCachenectClassData();
+  classesData[referrerClassId].library = JSON.parse(rawText).items;
+  await browser.storage.local.set({
+    cachenectClassesData: classesData,
+  });
 }
 
-async function writeLibraryData(json_classes) {
-  const jsonData = JSON.parse(rawText);
-  const { classLibraryMap = {} } =
-    await browser.storage.local.get("classLibraryMap");
-  await browser.storage.local.set({
-    classesAPIResponse: json_classes,
-    lastSync: Date.now(),
-  });
+function getEndingNumber(str) {
+  const match = str.match(/\d+$/);
+  return match ? Number(match[0]) : null;
+}
+
+async function getCachenectClassData() {
+  const { cachenectClassesData: classesData = {} } =
+    await browser.storage.local.get("cachenectClassesData"); //Get the old version of our data
+  return classesData;
 }

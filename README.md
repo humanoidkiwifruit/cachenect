@@ -1,6 +1,7 @@
 # cachenect
 
 Firefox extension to cache connect (connect.det.wa.edu.au) data and present it in an alternative view.
+Multi-user support is not planned.
 
 ## Installation
 

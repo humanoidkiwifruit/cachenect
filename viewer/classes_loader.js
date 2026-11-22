@@ -10,18 +10,19 @@ const prettyNameLookups = {
   learners: "Learners",
 };
 
+/**Load the class data into the table */
 async function loadClasses() {
-  const { cachenectClassesData = [] } = await browser.storage.local.get(
+  const { cachenectClassesData = {} } = await browser.storage.local.get(
     "cachenectClassesData",
-  );
+  ); //Get the data
   console.log("cachenectClassesData: ", cachenectClassesData);
 
   const table = document.getElementById("classes-table");
-  table.innerHTML = "";
+  table.innerHTML = ""; //Get and clear the table
 
   for (const [class_id, class_data] of Object.entries(cachenectClassesData)) {
     const classRow = classTableRow(class_id, class_data);
-    table.appendChild(classRow);
+    table.appendChild(classRow); //Create a row for every class
   }
 }
 
@@ -43,21 +44,31 @@ function classTableRow(class_id, class_data) {
   classTr.appendChild(nameLinkTd);
   nameLinkTd.classList.add("class-pretty-name");
 
-  let otherTds = Object.keys(prettyNameLookups).map((name) => {
+  let cachenectLibraryLinkTd = linkTd(
+    `/viewer/library.html?id=${class_id}`,
+    "Library",
+    false,
+  );
+  classTr.appendChild(cachenectLibraryLinkTd);
+
+  let connectLinkTds = Object.keys(prettyNameLookups).map((name) => {
     return linkTd(idRedirect + name, prettyNameLookups[name]);
   });
-  for (let td of otherTds) {
+  for (let td of connectLinkTds) {
     classTr.appendChild(td);
   }
 
   return classTr;
 }
 
-function linkTd(href, text) {
+function linkTd(href, text, isOfficialConnect = true) {
   let td = document.createElement("td");
   let link = document.createElement("a");
   link.href = href;
   link.innerText = text;
+  if (isOfficialConnect) {
+    link.style.color = "green";
+  }
   td.appendChild(link);
   return td;
 }

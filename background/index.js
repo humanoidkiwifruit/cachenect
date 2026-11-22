@@ -3,7 +3,7 @@ import { observeResponse, target } from "../capture/listener.js";
 browser.webRequest.onBeforeRequest.addListener(
   observeResponse,
   { urls: [target] },
-  ["blocking"],
+  ["blocking", "requestBody"],
 );
 
 browser.action.onClicked.addListener(async () => {

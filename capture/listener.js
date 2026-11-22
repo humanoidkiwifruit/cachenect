@@ -1,53 +1,62 @@
+import { handleClassesResponse } from "./handlers.js";
 export const target = "*://connect.det.wa.edu.au/*";
 const apiRequestPath = "connect.det.wa.edu.au/connectapi/rest/api/v1";
-const classesRequestUrl = "/connectapi/rest/api/v1/app/my_classes/";
+const classesRequestUrl = apiRequestPath + "/app/my_classes/";
+//const libraryRequestUrl = apiRequestPath + "/library/node/ * /contents"
 export function observeResponse(details) {
   if (details.type !== "xmlhttprequest") return;
-  if (!(isInterestingUrl(details.url) === "classesRequest")) return;
+  const requestType = getInterestingRequestType(details.url);
 
-  let filter = browser.webRequest.filterResponseData(details.requestId);
-  const decoder = new TextDecoder("utf-8");
-  let fullResponse = "";
+  if (requestType == "boring") {
+    return;
+  }
 
-  filter.ondata = (event) => {
-    fullResponse += decoder.decode(event.data, { stream: true });
-    filter.write(event.data);
-  };
-
-  filter.onstop = async (event) => {
-    try {
-      fullResponse += decoder.decode();
-
-      const json_data = JSON.parse(fullResponse);
-      const json_classes = json_data.items;
-      console.log(json_classes);
-
-      await writeClassesData(json_classes);
-    } catch (error) {
-      console.error("error: ", error.message);
-    } finally {
-      filter.close();
-    }
-  };
-
-  filter.onerror = () => {
-    console.error(`StreamFilter error: ${filter.error}`);
-  };
+  processResponse(details, requestType);
 }
 
-function isInterestingUrl(url) {
+async function processResponse(details, requestType) {
+  try {
+    const rawText = await getFullResponseData(details.requestId);
+    if (requestType === "classesRequest") {
+      await handleClassesResponse(rawText);
+    }
+    /*if (requestType === "libraryRequest") {
+      await handleLibraryRequest(details, rawText);
+    }*/
+  } catch (error) {
+    console.error(`Error: ${error}`);
+  }
+}
+
+function getFullResponseData(requestId) {
+  return new Promise((resolve, reject) => {
+    const filter = browser.webRequest.filterResponseData(requestId);
+    const decoder = new TextDecoder("utf-8");
+    let fullResponse = "";
+
+    filter.ondata = (event) => {
+      fullResponse += decoder.decode(event.data, { stream: true });
+      filter.write(event.data); // Pass data through to the webpage
+    };
+
+    filter.onstop = () => {
+      fullResponse += decoder.decode(); // Flush remaining bytes
+      filter.close();
+      resolve(fullResponse);
+    };
+
+    filter.onerror = () => {
+      reject(new Error(`error: ${filter.error}`));
+    };
+  });
+}
+
+function getInterestingRequestType(url) {
   if (url.includes(classesRequestUrl)) {
     return "classesRequest";
   }
-  /*if (url.includes(classLibraryRequestUrl)) {
+  /*if (url.includes()) {
     return "libraryRequest";
     }*/
-  return url.includes(classesRequestUrl);
-}
-
-async function writeClassesData(json_classes) {
-  await browser.storage.local.set({
-    classes: json_classes,
-    lastSync: Date.now(),
-  });
+  return "boring";
 }

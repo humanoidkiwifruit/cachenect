@@ -6,5 +6,6 @@ Multi-user support is not planned.
 ## Installation
 
 1. Download this repo as a zip and extract it somewhere
-2. Head to (about:debugging#/runtime/this-firefox)[about:debugging#/runtime/this-firefox]
-3. "Load Temporary Add-on" -> Select manifest.json from the extracted zip
+2. Head to [about:debugging#](about:debugging#/runtime/this-firefox)
+3. Select "This Firefox"
+4. "Load Temporary Add-on" -> Select manifest.json from the extracted zip (any other file in the root of the repo should also work)

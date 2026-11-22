@@ -1,6 +1,6 @@
+const baseConnectUrl = "https://connect.det.wa.edu.au";
 async function loadLibrary() {
-  const params = new URLSearchParams(window.location.search);
-  const class_id = params.get("id");
+  const class_id = getClassId();
   const { cachenectClassesData = {} } = await browser.storage.local.get(
     "cachenectClassesData",
   ); //Get the data
@@ -15,9 +15,7 @@ async function loadLibrary() {
     link.innerText = libraryItem.name;
     if (Object.hasOwn(libraryItem, "fileItem")) {
       //link.innerText = link.innerText + " - FILE"
-      link.href =
-        "https://connect.det.wa.edu.au" +
-        libraryItem.fileItem.trackedAttachmentUrl;
+      link.href = baseConnectUrl + libraryItem.fileItem.trackedAttachmentUrl;
     } else {
       li.style.fontWeight = "bold";
     }
@@ -27,3 +25,10 @@ async function loadLibrary() {
 }
 
 loadLibrary();
+document.getElementById("official-connect-link").href =
+  baseConnectUrl + "/redirect/cls/" + getClassId() + "/class-library";
+
+function getClassId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id");
+}

@@ -1,7 +1,9 @@
 # cachenect
 
-Firefox extension to cache connect (connect.det.wa.edu.au) data and present it in an alternative view.
+Firefox-**only** extension to cache connect (connect.det.wa.edu.au) data and present it in an alternative view.
 Multi-user support is not planned.
+
+![A screenshot of Cachenect displaying a grid of class names and links to connect tabs.](screenshot.png)
 
 ## Installation
 

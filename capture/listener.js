@@ -1,6 +1,6 @@
 export const target = "*://connect.det.wa.edu.au/*";
 const apiRequestPath = "connect.det.wa.edu.au/connectapi/rest/api/v1";
-
+const classesRequestUrl = "/connectapi/rest/api/v1/app/my_classes/";
 export function observeResponse(details) {
   if (details.type !== "xmlhttprequest") return;
   if (!(isInterestingUrl(details.url) === "classesRequest")) return;

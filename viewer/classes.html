@@ -3,25 +3,52 @@
   <head>
     <meta charset="utf-8" />
     <title>Classes</title>
+
+    <style>
+      a {
+        text-decoration: none;
+      }
+      td {
+        border: 1px solid black;
+        padding: 10px;
+      }
+      .class-pretty-name {
+        font-weight: bold;
+      }
+      .top-button {
+        padding: 10px;
+        border: 1px solid black;
+        display: inline-block;
+        margin: 5px;
+      }
+    </style>
   </head>
-  <style>
-    td {
-      border: 1px solid black;
-      padding: 10px;
-    }
-    .classname {
-      font-weight: bold;
-    }
-  </style>
+
   <body>
     <h1>
       Cachenect <img src="../logo.svg" style="height: 3em; width: auto" />
     </h1>
+    <a
+      class="top-button"
+      href="https://connect.det.wa.edu.au/group/students/ui/my-connect"
+      >My Connect</a
+    >
+    <a
+      class="top-button"
+      href="https://connect.det.wa.edu.au/group/students/ui/classes"
+      >Classes</a
+    >
+    <a
+      class="top-button"
+      href="https://connect.det.wa.edu.au/group/students/ui/feed"
+      >My Feed</a
+    >
     <table id="classes-table"></table>
     <p>
       If there are no classes above, try refreshing the Connect homepage then
       reloading this page.
     </p>
+    <button id="clear-btn">Clear localStorage</button>
     <script src="classes_loader.js"></script>
   </body>
 </html>

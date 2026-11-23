@@ -1,6 +1,6 @@
 const baseConnectUrl = "https://connect.det.wa.edu.au";
 async function loadLibrary() {
-  const class_id = getClassId();
+  const class_id = getRequestedClassIdFromUrlParams();
   const { cachenectClassesData = {} } = await browser.storage.local.get(
     "cachenectClassesData",
   ); //Get the data
@@ -13,8 +13,8 @@ async function loadLibrary() {
     let li = document.createElement("li");
     let link = document.createElement("a");
     link.innerText = libraryItem.name;
-    if (Object.hasOwn(libraryItem, "fileItem")) {
-      //link.innerText = link.innerText + " - FILE"
+    if (libraryItem.nodeType === "FILEITEM") {
+      //Is a file rather than a folder
       link.href = baseConnectUrl + libraryItem.fileItem.trackedAttachmentUrl;
     } else {
       li.style.fontWeight = "bold";
@@ -26,9 +26,13 @@ async function loadLibrary() {
 
 loadLibrary();
 document.getElementById("official-connect-link").href =
-  baseConnectUrl + "/redirect/cls/" + getClassId() + "/class-library";
+  baseConnectUrl +
+  "/redirect/cls/" +
+  getRequestedClassIdFromUrlParams() +
+  "/class-library";
 
-function getClassId() {
+/**Applies to getting the class id ONLY from the url bar in library.html. Does not work for the official connect site */
+function getRequestedClassIdFromUrlParams() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
 }

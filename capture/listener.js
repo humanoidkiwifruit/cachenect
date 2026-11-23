@@ -1,4 +1,8 @@
-import { handleClassesResponse, handleLibraryRequest } from "./handlers.js";
+import {
+  handleClassesResponse,
+  handleLibraryRequest,
+  handleTeachersRequest,
+} from "./handlers.js";
 export const target = "*://connect.det.wa.edu.au/*";
 const apiRequestPath = "connect.det.wa.edu.au/connectapi/rest/api/v1";
 const classesRequestUrl = apiRequestPath + "/app/my_classes/";
@@ -14,6 +18,7 @@ export function observeResponse(details) {
 }
 
 async function processResponse(details, requestType) {
+  console.log("processResponse, request type: ", requestType);
   try {
     const rawText = await getFullResponseData(details.requestId);
     if (requestType === "classesRequest") {
@@ -21,6 +26,11 @@ async function processResponse(details, requestType) {
     }
     if (requestType === "libraryRequest") {
       await handleLibraryRequest(details, rawText);
+    }
+
+    if (requestType === "teachersRequest") {
+      console.log("processing a teachersRequest");
+      await handleTeachersRequest(details, rawText);
     }
   } catch (error) {
     console.error(`Error: ${error}`);
@@ -61,6 +71,13 @@ function getInterestingRequestType(url) {
   ) {
     //apiRequestPath + "/library/node/<some strange id derived from the class id>/contents"
     return "libraryRequest";
+  }
+  if (
+    cleanUrl.includes(apiRequestPath + "/common/schoolclasses/") && (
+    cleanUrl.endsWith("/teachers") || cleanUrl.endsWith("/staff"))
+  ) {
+    console.log("Url is a teachersRequest");
+    return "teachersRequest";
   }
   return "boring";
 }

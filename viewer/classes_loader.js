@@ -51,6 +51,13 @@ function classTableRow(class_id, class_data) {
   );
   classTr.appendChild(cachenectLibraryLinkTd);
 
+  let cachenectPeopleLinkTd = linkTd(
+    `/viewer/teachersandlearners.html?id=${class_id}`,
+    "Teachers and Learners",
+    false,
+  );
+  classTr.appendChild(cachenectPeopleLinkTd);
+
   let connectLinkTds = Object.keys(prettyNameLookups).map((name) => {
     return linkTd(idRedirect + name, prettyNameLookups[name]);
   });
@@ -63,6 +70,7 @@ function classTableRow(class_id, class_data) {
 
 function linkTd(href, text, isOfficialConnect = true) {
   let td = document.createElement("td");
+  td.classList.add("link-td");
   let link = document.createElement("a");
   link.href = href;
   link.innerText = text;

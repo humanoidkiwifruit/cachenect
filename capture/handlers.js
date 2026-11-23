@@ -21,10 +21,8 @@ export async function handleClassesResponse(rawText) {
 }
 
 export async function handleLibraryRequest(details, rawText) {
-  const referrerUrl = details.documentUrl || details.originUrl;
-  console.log(`got library request from referrer ${referrerUrl}`);
-  const referrerClassId = getEndingNumber(referrerUrl);
-  console.log(`referrer class id: ${referrerClassId}`);
+  const referrerClassId = getReferrerClassId(details);
+  console.log(`library request from referrer class id: ${referrerClassId}`);
   let classesData = await getCachenectClassData();
   classesData[referrerClassId].library = JSON.parse(rawText).items;
   await browser.storage.local.set({
@@ -32,13 +30,25 @@ export async function handleLibraryRequest(details, rawText) {
   });
 }
 
-function getEndingNumber(str) {
-  const match = str.match(/\d+$/);
-  return match ? Number(match[0]) : null;
-}
-
 async function getCachenectClassData() {
   const { cachenectClassesData: classesData = {} } =
     await browser.storage.local.get("cachenectClassesData"); //Get the old version of our data
   return classesData;
+}
+
+function getReferrerClassId(details) {
+  const url = details.documentUrl || details.originUrl;
+  const match = url.match(/\d+$/);
+  return match ? Number(match[0]) : null;
+}
+
+export async function handleTeachersRequest(details, rawText) {
+  console.log("handling a teachersRequest");
+  const teachers = JSON.parse(rawText).items;
+  let classesData = await getCachenectClassData();
+  const referrerClassId = getReferrerClassId(details);
+  classesData[referrerClassId].teachers = teachers;
+  await browser.storage.local.set({
+    cachenectClassesData: classesData,
+  });
 }

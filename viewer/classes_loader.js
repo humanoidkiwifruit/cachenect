@@ -52,7 +52,7 @@ function classTableRow(class_id, class_data) {
   classTr.appendChild(cachenectLibraryLinkTd);
 
   let cachenectPeopleLinkTd = linkTd(
-    `/viewer/teachersandlearners.html?id=${class_id}`,
+    `/viewer/people.html?id=${class_id}`,
     "Teachers and Learners",
     false,
   );

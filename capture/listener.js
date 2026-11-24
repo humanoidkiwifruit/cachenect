@@ -2,17 +2,33 @@ import {
   handleClassesResponse,
   handleLibraryRequest,
   handleTeachersRequest,
+  handleStudentsRequest,
 } from "./handlers.js";
+
 export const target = "*://connect.det.wa.edu.au/*";
-const apiRequestPath = "connect.det.wa.edu.au/connectapi/rest/api/v1";
-const classesRequestUrl = apiRequestPath + "/app/my_classes/";
+
+const apiRequestPathRegex =
+  "connect\\.det\\.wa\\.edu\\.au/connectapi/rest/api/v1";
+
+const classesRegex = new RegExp(`^${apiRequestPathRegex}/app/my_classes/`);
+
+const libraryRegex = new RegExp(
+  `^${apiRequestPathRegex}/library/node/.+/contents$`,
+);
+
+const teachersRegex = new RegExp(
+  `^${apiRequestPathRegex}/common/schoolclasses/.+/(teachers|staff)$`,
+);
+
+export const studentsRegex = new RegExp(
+  `^${apiRequestPathRegex}/common/schoolclasses/.+/students$`,
+);
+
 export function observeResponse(details) {
   if (details.type !== "xmlhttprequest") return;
   const requestType = getInterestingRequestType(details.url);
 
-  if (requestType == "boring") {
-    return;
-  }
+  if (requestType == "boring") return;
 
   processResponse(details, requestType);
 }
@@ -24,6 +40,7 @@ async function processResponse(details, requestType) {
     if (requestType === "classesRequest") {
       await handleClassesResponse(rawText);
     }
+
     if (requestType === "libraryRequest") {
       await handleLibraryRequest(details, rawText);
     }
@@ -31,6 +48,11 @@ async function processResponse(details, requestType) {
     if (requestType === "teachersRequest") {
       console.log("processing a teachersRequest");
       await handleTeachersRequest(details, rawText);
+    }
+
+    if (requestType === "studentsRequest") {
+      console.log("processing a studentsRequest");
+      await handleStudentsRequest(details, rawText);
     }
   } catch (error) {
     console.error(`Error: ${error}`);
@@ -61,23 +83,23 @@ function getFullResponseData(requestId) {
 }
 
 function getInterestingRequestType(url) {
-  let cleanUrl = url.split("?")[0];
-  if (url.includes(classesRequestUrl)) {
+  const urlObject = new URL(url);
+  let cleanUrl = urlObject.hostname + urlObject.pathname;
+
+  if (classesRegex.test(cleanUrl)) {
     return "classesRequest";
   }
-  if (
-    cleanUrl.includes(apiRequestPath + "/library/node") &&
-    cleanUrl.endsWith("/contents")
-  ) {
-    //apiRequestPath + "/library/node/<some strange id derived from the class id>/contents"
+
+  if (libraryRegex.test(cleanUrl)) {
     return "libraryRequest";
   }
-  if (
-    cleanUrl.includes(apiRequestPath + "/common/schoolclasses/") && (
-    cleanUrl.endsWith("/teachers") || cleanUrl.endsWith("/staff"))
-  ) {
+  if (teachersRegex.test(cleanUrl)) {
     console.log("Url is a teachersRequest");
     return "teachersRequest";
+  }
+  if (studentsRegex.test(cleanUrl)) {
+    console.log("url is a studentsRequest");
+    return "studentsRequest";
   }
   return "boring";
 }

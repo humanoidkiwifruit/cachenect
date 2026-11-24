@@ -6,22 +6,14 @@ async function loadPeople() {
   ); //Get the data
   console.log("cachenectClassesData: ", cachenectClassesData);
   let teachersList = document.getElementById("teachers-list");
+  let studentsList = document.getElementById("students-list");
+
   for (const teacher of cachenectClassesData[class_id].teachers) {
-    let li = document.createElement("li");
-    li.innerText = `${teacher.name} - ${teacher.emailAddress} `;
-    let copyEmailButton = document.createElement("button");
-    copyEmailButton.textContent = "Copy email address";
+    teachersList.appendChild(personLi(teacher));
+  }
 
-    copyEmailButton.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(teacher.emailAddress);
-      copyEmailButton.textContent = "Copied!";
-      setTimeout(() => {
-        copyEmailButton.textContent = "Copy email address";
-      }, 1500);
-    });
-
-    li.appendChild(copyEmailButton);
-    teachersList.appendChild(li);
+  for (const student of cachenectClassesData[class_id].students) {
+    studentsList.appendChild(personLi(student));
   }
 }
 
@@ -36,4 +28,22 @@ document.getElementById("official-connect-link").href =
 function getRequestedClassIdFromUrlParams() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
+}
+
+function personLi(person_item) {
+  let li = document.createElement("li");
+  li.innerText = `${person_item.name} - ${person_item.emailAddress} `;
+  let copyEmailButton = document.createElement("button");
+  copyEmailButton.textContent = "Copy email address";
+
+  copyEmailButton.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(person_item.emailAddress);
+    copyEmailButton.textContent = "Copied!";
+    setTimeout(() => {
+      copyEmailButton.textContent = "Copy email address";
+    }, 1500);
+  });
+
+  li.appendChild(copyEmailButton);
+  return li;
 }

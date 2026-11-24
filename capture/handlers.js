@@ -52,3 +52,14 @@ export async function handleTeachersRequest(details, rawText) {
     cachenectClassesData: classesData,
   });
 }
+
+export async function handleStudentsRequest(details, rawText) {
+  console.log("handling a StudentsRequest");
+  const students = JSON.parse(rawText).items;
+  let classesData = await getCachenectClassData();
+  const referrerClassId = getReferrerClassId(details);
+  classesData[referrerClassId].students = students;
+  await browser.storage.local.set({
+    cachenectClassesData: classesData,
+  });
+}

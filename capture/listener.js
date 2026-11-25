@@ -3,6 +3,7 @@ import {
   handleLibraryRequest,
   handleTeachersRequest,
   handleStudentsRequest,
+  handleNoticesRequest,
 } from "./handlers.js";
 
 export const target = "*://connect.det.wa.edu.au/*";
@@ -22,6 +23,10 @@ const teachersRegex = new RegExp(
 
 export const studentsRegex = new RegExp(
   `^${apiRequestPathRegex}/common/schoolclasses/.+/students$`,
+);
+
+export const noticesRegex = new RegExp(
+  `^${apiRequestPathRegex}/notices/scope/DomainSchoolClass/.+/$`,
 );
 
 export function observeResponse(details) {
@@ -53,6 +58,11 @@ async function processResponse(details, requestType) {
     if (requestType === "studentsRequest") {
       console.log("processing a studentsRequest");
       await handleStudentsRequest(details, rawText);
+    }
+
+    if (requestType === "noticesRequest") {
+      console.log("processing a noticesRequest");
+      await handleNoticesRequest(details, rawText);
     }
   } catch (error) {
     console.error(`Error: ${error}`);
@@ -100,6 +110,10 @@ function getInterestingRequestType(url) {
   if (studentsRegex.test(cleanUrl)) {
     console.log("url is a studentsRequest");
     return "studentsRequest";
+  }
+  if (noticesRegex.test(cleanUrl)) {
+    console.log("url is a noticesRequest");
+    return "noticesRequest";
   }
   return "boring";
 }
